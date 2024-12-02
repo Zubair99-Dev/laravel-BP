@@ -24,6 +24,22 @@
             <x-input-error :messages="$errors->get('password')" class="mt-2" />
         </div>
 
+        <!-- Captcha (Conditional) -->
+        @if(\Illuminate\Support\Facades\DB::table('settings')->where('key', 'captcha_enabled')->value('value') == '1')
+            <div class="mt-4">
+                <x-input-label for="captcha" :value="__('Captcha')" />
+                
+                <div class="mt-2 flex items-center">
+                    <!-- Render Captcha Image -->
+                    <span id="captcha-image">{!! Captcha::img() !!}</span>
+                </div>
+                
+                <!-- Captcha Input -->
+                <x-text-input id="captcha" class="block mt-1 w-full mt-2" type="text" name="captcha" required />
+                <x-input-error :messages="$errors->get('captcha')" class="mt-2" />
+            </div>
+        @endif
+        
         <!-- Remember Me -->
         <div class="block mt-4">
             <label for="remember_me" class="inline-flex items-center">
@@ -45,3 +61,5 @@
         </div>
     </form>
 </x-guest-layout>
+
+

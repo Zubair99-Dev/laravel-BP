@@ -24,7 +24,6 @@
                     <x-slot name="trigger">
                         <button class="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-gray-500 bg-white hover:text-gray-700 focus:outline-none transition ease-in-out duration-150">
                             <div>{{ Auth::user()->name }}</div>
-
                             <div class="ms-1">
                                 <svg class="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
                                     <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" />
@@ -37,6 +36,14 @@
                         <x-dropdown-link :href="route('profile.edit')">
                             {{ __('Profile') }}
                         </x-dropdown-link>
+
+                        <!-- Captcha Setting -->
+                        <div class="px-4 py-2">
+                            <label class="block text-sm font-medium text-gray-700 mb-1 cursor-pointer"
+                                onclick="showCaptchaModal()">
+                                {{ __('Captcha Setting') }}
+                            </label>
+                        </div>
 
                         <!-- Authentication -->
                         <form method="POST" action="{{ route('logout') }}">
@@ -97,4 +104,25 @@
             </div>
         </div>
     </div>
+
+    <!-- Add the modal code here -->
+    <div id="captchaModal" class="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-50 hidden">
+        <div class="bg-white p-6 rounded shadow-lg w-96">
+            <h2 class="text-lg font-bold mb-4 text-center">Captcha Setting</h2>
+            <div class="text-center">
+                <img id="captcha-status" 
+                     src="{{ asset('images/' . (DB::table('settings')->where('key', 'captcha_enabled')->value('value') == '1' ? 'Enabled' : 'Disabled') . '.png') }}" 
+                     class="cursor-pointer w-16 h-auto mx-auto"
+                     data-status="{{ DB::table('settings')->where('key', 'captcha_enabled')->value('value') }}" 
+                     onclick="toggleCaptchaSetting(this)" 
+                     alt="Captcha Status">
+            </div>
+            <div class="mt-6 text-center">
+                <x-primary-button onclick="hideCaptchaModal()" class="px-4 py-2 bg-red-500 text-black rounded hover:bg-red-600">
+                    {{ __('Close') }}
+                </x-primary-button>
+            </div>
+        </div>
+    </div>
+    
 </nav>

@@ -32,5 +32,60 @@
                 {{ $slot }}
             </main>
         </div>
+        <script>
+            function showCaptchaModal() {
+                const modal = document.getElementById('captchaModal');
+                modal.classList.remove('hidden'); // Remove the 'hidden' class to show the modal
+            }
+
+            function hideCaptchaModal() {
+                const modal = document.getElementById('captchaModal');
+                modal.classList.add('hidden'); // Add the 'hidden' class to hide the modal
+            }
+
+            
+            document.addEventListener('DOMContentLoaded', function () {
+                // Get the image element
+                const captchaStatusImg = document.getElementById('captcha-status');
+        
+                // Check if the element exists on the page
+                if (captchaStatusImg) {
+                    // Add a click event listener
+                    captchaStatusImg.addEventListener('click', function () {
+                        // Get current status from the data-status attribute
+                        let currentStatus = captchaStatusImg.getAttribute('data-status');
+                        let newStatus = (currentStatus === '1') ? '0' : '1'; // Toggle the status
+                        
+                        // Make an AJAX request to update the captcha status in the database
+                        fetch('{{ route('admin.updateCaptchaSetting') }}', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'X-CSRF-TOKEN': '{{ csrf_token() }}', // Include CSRF token
+                            },
+                            body: JSON.stringify({
+                                status: newStatus
+                            }),
+                        })
+                        .then(response => response.json())
+                        .then(data => {
+                            // If the status is successfully updated in the database
+                            if (data.success) {
+                                // Update the image source based on the new status
+                                captchaStatusImg.setAttribute('src', `{{ asset('images/') }}/${newStatus === '1' ? 'Enabled' : 'Disabled'}.png`);
+                                captchaStatusImg.setAttribute('data-status', newStatus); // Update the status attribute
+                            } else {
+                                alert('Failed to update Captcha status.');
+                            }
+                        })
+                        .catch(error => {
+                            console.error('Error:', error);
+                            alert('An error occurred while updating Captcha status.');
+                        });
+                    });
+                }
+            });
+        </script>        
     </body>
 </html>
+
